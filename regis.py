@@ -29,7 +29,7 @@ def user_regist():
             cek = cek_user(username,password)
             if cek == None:
                 input_data_user (id,nim,username,jurusan,prodi,kelas,email,password)
-                result = {"message" : "input berhasil"}
+                result = {"message :input berhasil"}
                 resp = jsonify(result)
                 return resp, 203 
             else:
