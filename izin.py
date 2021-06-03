@@ -22,10 +22,10 @@ def izin():
             id = json_data['id']
             matakuliah = json_data['matakuliah']
             dosen = json_data['dosen']
-            time = datetime.datetime.now()
+            time = datetime.now()
             tgl = date.today()
             tgl = tgl.strftime("%d%m%Y")
-            day = datetime.datetime.strptime(tgl, '%d%m%Y').weekday()
+            day = datetime.strptime(tgl, '%d%m%Y').weekday()
             day = calendar.day_name[day]
             day = str(day)
             day = day.lower()

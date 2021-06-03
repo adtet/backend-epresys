@@ -196,7 +196,7 @@ def cek_present(a, b, c):
     db = koneksi_sql()
     cursor = db.cursor()
     cursor.execute(
-        "SELECT id FROM main where id=%s and matakuliah=%s ,date=%s",
+        "SELECT id FROM main where id=%s and matakuliah=%s and date=%s",
         (a, b, c))
     d = cursor.fetchone()
     if d == None:
