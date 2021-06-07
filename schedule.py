@@ -15,12 +15,12 @@ def schedule():
     if json_data == None:
         result = []
         resp = json.dumps(result)
-        return resp, 400
+        return resp, 402
     else:
         if 'id' not in json_data:
             result = []
             resp = json.dumps(result)
-            return resp, 401
+            return resp, 409
         else:
             id = json_data['id']
             kelas = get_kelas(id)
@@ -33,13 +33,13 @@ def schedule():
             if kelas == None:
                 result = []
                 resp = json.dumps(result)
-                return resp, 203
+                return resp, 206
             else:
                 result = get_jadwal(kelas, day)
-                status_code = 200
-                return result, status_code
+                resp = json.dumps(result)
+                return resp, 207
 
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=4002)
-    app.run(port=4002, debug=True)
+    app.run(port=4001, debug=True)

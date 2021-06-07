@@ -47,13 +47,13 @@ def izin():
                 if cek == False:
                     result = {"izin": "sudah absensi"}
                     resp = jsonify(result)
-                    return resp, 501
+                    return resp, 503
                 else:
                     insert_main(id, nim, username, jurusan, prodi, kelas, email, matakuliah, dosen, day, det, time, info)
                     result = {"izin": "proses izin berhasil"}
                     resp = jsonify(result)
-                    return resp, 504
+                    return resp, 600
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=4004)
-    app.run(port=4004, debug=True)
+    app.run(port=4006, debug=True)

@@ -13,12 +13,12 @@ def absen():
     if json_data == None:
         result = {"link":"error"}
         resp = jsonify(result)
-        return resp, 400
+        return resp, 410
     else:
         if 'id' not in json_data or 'matakuliah' not in json_data:
             result = {"link": "Not Available"}
             resp = jsonify(result)
-            return resp, 403
+            return resp, 411
         else:
             id = json_data['id']
             matkul = json_data['matakuliah']
@@ -35,12 +35,12 @@ def absen():
             if cek == False:
                 result = {"link" : 'id Not Available'}
                 resp = jsonify(result)
-                return resp, 406
+                return resp, 412
             else:
                 if day == 'sunday' and day == 'saturday' :
                     result = {"link": "schedule not available"}
                     resp = jsonify(result)
-                    return resp, 407
+                    return resp, 413
                 else:
                     nim = get_nim(id)
                     username = get_username(id)
@@ -58,7 +58,7 @@ def absen():
                             info = "you are absent"
                             result = {"link": info}
                             resp = jsonify(result)
-                            return resp, 407
+                            return resp, 414
                         else:
                             info = "telat"
                             cek_late = cek_present(id, late[0], det)
@@ -72,7 +72,7 @@ def absen():
                                 data = "http://g.co/meet/" + tlt.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 402
+                                return resp, 208
                             else:
                                 info = "telat"
                                 late = str(late[0])
@@ -83,7 +83,7 @@ def absen():
                                 data = "http://g.co/meet/" + tlt.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 200
+                                return resp, 209
                     else:
                         if matkul == str(mtkl[0]).rstrip('\r\n'):
                             info = "hadir"
@@ -98,7 +98,7 @@ def absen():
                                 data = "http://g.co/meet/" + hdr.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 200
+                                return resp, 210
                             else:
                                 hadir = str(mtkl[0])
                                 hadir = hadir.translate(
@@ -108,14 +108,14 @@ def absen():
                                 data = "http://g.co/meet/" + hdr.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 201
+                                return resp, 211
                         else:
                             late = get_matkul_late(kelas, day, waktu)
                             if late == 0:
                                 info = "your are absent"
                                 result = {"link": info}
                                 resp = jsonify(result)
-                                return resp, 208
+                                return resp, 212
                             else:
                                 if matkul == str(late[0].rstrip('\r\n')):
                                     cek_late = cek_present(id, late[0], det)
@@ -130,7 +130,7 @@ def absen():
                                          data = "http://g.co/meet/" + tlt.lower()
                                          result = {"link": data}
                                          resp = jsonify(result)
-                                         return resp, 209
+                                         return resp, 213
                                     else:
                                         late = str(late[0])
                                         telat = late.translate(
@@ -141,16 +141,16 @@ def absen():
                                         )
                                         result = {"link": data}
                                         resp = jsonify(result)
-                                        return resp, 204
+                                        return resp, 214
                                 else:
                                     info = "you are absent"
                                     result = {"link": info}
                                     resp = jsonify(result)
-                                    return resp, 205
+                                    return resp, 215
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=4003)
-    app.run(port=4003, debug=True)
+    app.run(port=4007, debug=True)
 
                                          
                                                     

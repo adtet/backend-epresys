@@ -12,4 +12,4 @@ def lokasi():
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=4000)
-    app.run(port=4000, debug=True)
+    app.run(port=4004, debug=True)
