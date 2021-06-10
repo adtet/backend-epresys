@@ -38,5 +38,5 @@ def user_regist():
                 return resp, 202
 
 if __name__ == "__main__":
-    # serve(app, host="0.0.0.0", port=4001)
-    app.run(port=4002, debug=True)
+    # serve(app, host="0.0.0.0", port=9002)
+    app.run(port=9002, debug=True)

@@ -7,7 +7,7 @@ from datetime import date, datetime
 import calendar
 app = Flask(__name__)
 
-@app.route('/user/absen',methods=['POST'])
+@app.route('/user/present',methods=['POST'])
 def absen():
     json_data = flask.request.json
     if json_data == None:
