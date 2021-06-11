@@ -6,18 +6,18 @@ from datetime import date, datetime
 import calendar
 app = Flask(__name__)
 
-@app.route("/user/izin", methods=['POST'])
+@app.route("/user/sakit", methods=['POST'])
 def izin():
     json_data = flask.request.json
     if json_data == None:
-        result = {"izin":"Bad Request"}
+        result = {"sakit":"Bad Request"}
         resp = jsonify(result)
-        return resp, 500
+        return resp, 507
     else:
         if 'id' not in json_data or 'matakuliah' not in json_data or 'dosen' not in json_data:
-            result = {"izin" : "Error Request"}
+            result = {"sakit" : "Error Request"}
             resp = jsonify(result)
-            return resp, 501
+            return resp, 508
         else:
             id = json_data['id']
             matakuliah = json_data['matakuliah']
@@ -30,9 +30,9 @@ def izin():
             day = str(day)
             day = day.lower()
             if day == 'saturday' and day == 'sunday':
-                result = {"izin": "schedule nt available"}
+                result = {"sakit": "schedule nt available"}
                 resp = jsonify(result)
-                return resp, 502
+                return resp, 509
             else:
                 nim = get_nim(id)
                 username = get_username(id)
@@ -42,18 +42,18 @@ def izin():
                 email = get_email(id)
                 det = time.strftime("%d-%m-%Y")
                 time = time.strftime("%H:%M:%S")
-                info = "izin"
+                info = "sakit"
                 cek = cek_present(id, matakuliah, det)
                 if cek == False:
-                    result = {"izin": "sudah absensi"}
+                    result = {"sakit": "sudah absensi"}
                     resp = jsonify(result)
-                    return resp, 503
+                    return resp, 602
                 else:
                     insert_main(id, nim, username, jurusan, prodi, kelas, email, matakuliah, dosen, day, det, time, info)
-                    result = {"izin": "proses izin berhasil"}
+                    result = {"sakit": "proses izin sakit berhasil"}
                     resp = jsonify(result)
-                    return resp, 600
+                    return resp, 603
 
 if __name__ == "__main__":
-    # serve(app, host="0.0.0.0", port=9004)
-    app.run(port=9006, debug=True)
+    # serve(app, host="0.0.0.0", port=9009)
+    app.run(port=9009, debug=True)
