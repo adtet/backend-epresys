@@ -36,7 +36,7 @@ def schedule():
                 return resp, 206
             else:
                 result = get_jadwal(kelas, day)
-                resp = json.dumps(result)
+                resp = result
                 return resp, 207
 
 
