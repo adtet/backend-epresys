@@ -52,7 +52,7 @@ def izin():
                     insert_main(id, nim, username, jurusan, prodi, kelas, email, matakuliah, dosen, day, det, time, info)
                     result = {"sakit": "proses izin sakit berhasil"}
                     resp = jsonify(result)
-                    return resp, 603
+                    return resp, 200
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=9009)
