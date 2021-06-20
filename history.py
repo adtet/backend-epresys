@@ -24,9 +24,9 @@ def history():
                 return json.dumps(result), 506
             else:
                 result = get_main(id)
-                return result, 601
+                return result, 201
 
 
 if __name__ == "__main__":
-    # serve(app, host="0.0.0.0", port=4006)
+    # serve(app, host="0.0.0.0", port=9008)
     app.run(port=4008, debug=True)
