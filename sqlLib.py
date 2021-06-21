@@ -16,19 +16,32 @@ def input_data_user(id,nim,username,jurusan,prodi,kelas,email,password,status):
 def cek_user(username,password):
     db = koneksi_sql()
     cursor = db.cursor()
-    cursor.execute("SELECT id FROM user_regist where username=%s and password=%s",(username,password))
+    cursor.execute("SELECT id,status FROM user_regist where username=%s and password=%s",(username,password))
     c = cursor.fetchone()
     if c==None:
         return None
     else:
-        return c[0]
+        return c
 
+def cek_nim(nim):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nim` FROM `user_regist` WHERE `nim`=%s",(nim,))
+        c = cursor.fetchone()
+    except(mysql.connector.Warning,mysql.connector.Error) as e:
+        print(e)
+        c = None
+    if c==None:
+        return False
+    else:
+        return True
 
 def get_jadwal(kelas):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT  `time_start`, `time_end`,  `matakuliah`, `dosen1`, `dosen2`, `dosen3`, `ruangan` FROM `schedule` WHERE `kelas`=%s AND `day`=LOWER(DAYNAME(CURDATE()))",(kelas,"monday"))
+        cursor.execute("SELECT  `time_start`, `time_end`,  `matakuliah`, `dosen1`, `dosen2`, `dosen3`, `ruangan` FROM `schedule` WHERE `kelas`=%s AND `day`=LOWER(DAYNAME(CURDATE()))",(kelas,))
         rows = [x for x in cursor]  
         cols = [x[0] for x in cursor.description]
     except(mysql.connector.Error,mysql.connector.Warning) as e:
@@ -211,6 +224,34 @@ def get_matkul_late(kelas):
     else:
         return d
 
+def get_matkul_dosen(nip):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND time_start>=now() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return None
+    else:
+        return c
+
+def get_matkul_late_dosen(nip):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND time_start<=CURTIME() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return None
+    else:
+        return c
+
 def cek_present(id,matakuliah):
     db = koneksi_sql()
     cursor = db.cursor()
@@ -223,7 +264,7 @@ def cek_present(id,matakuliah):
     else:
         return False
 
-def cek_present_dosen(id,matakuliah,date):
+def cek_present_dosen(id,matakuliah):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
@@ -254,18 +295,17 @@ def insert_main(id, nim, username, kelas, matakuliah, dosen1, dosen2, dosen3, in
     "INSERT INTO `main`(`id`, `nim`, `username`, `kelas`, `matakuliah`, `dosen1`, `dosen2`, `dosen3`, `day`, `date`, `time`, `info`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,LOWER(DAYNAME(now())),now(),now(),%s)",(id, nim, username, kelas, matakuliah, dosen1, dosen2, dosen3, info))
     db.commit()
 
-def insert_main_dosen():
-    db = koneksi_sql()
-    
-    
-def cek_present(a, b, c):
+def insert_main_dosen(id,nim,username,matakuliah,kelas,info):
     db = koneksi_sql()
     cursor = db.cursor()
-    cursor.execute(
-        "SELECT id FROM main where id=%s and matakuliah=%s and date=%s",
-        (a, b, c))
-    d = cursor.fetchone()
-    if d == None:
-        return True
-    else:
-        return False
+    cursor.execute("INSERT INTO `main2`(`id`, `nip`, `username`, `matakuliah`, `kelas`, `day`, `date`, `time`, `info`) VALUES (%s,%s,%s,%s,%s,LOWER(DAYNAME(CURDATE())),now(),now(),%s)",(id,nim,username,matakuliah,kelas,info))
+    db.commit()
+    
+def get_status(id):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    cursor.execute("SELECT status FROM `user_regist` WHERE id = %s",(id,))
+    c = cursor.fetchone()[0]
+    return int(c)
+    
+print(get_matkul("2A"))

@@ -1,5 +1,5 @@
 from flask import Flask,jsonify,request
-from sqlLib import input_data_user, cek_user
+from sqlLib import get_nim, input_data_user, cek_user,cek_nim
 import uuid
 import hashlib
 app = Flask(__name__)
@@ -12,7 +12,7 @@ def user_regist():
         resp = jsonify(result)
         return resp,404
     else:
-        if 'nim' not in json_data or 'username' not in json_data or 'jurusan' not in json_data or 'prodi' not in json_data or 'kelas' not in json_data or 'email' not in json_data or 'pass' not in json_data :
+        if 'nim' not in json_data or 'username' not in json_data or 'jurusan' not in json_data or 'prodi' not in json_data or 'kelas' not in json_data or 'email' not in json_data or 'pass' not in json_data or 'status' not in json_data :
             result = {"message":"error request"} 
             resp = jsonify(result)
             return resp, 405
@@ -25,10 +25,12 @@ def user_regist():
             kelas =json_data ['kelas']
             email = json_data ['email']
             password = json_data ['pass']
+            status = json_data['status']
             password = hashlib.sha256(password.encode()).hexdigest()
             cek = cek_user(username,password)
-            if cek == None:
-                input_data_user (id,nim,username,jurusan,prodi,kelas,email,password)
+            nim_cek = cek_nim(nim)
+            if cek == None and nim_cek==False:
+                input_data_user (id,nim,username,jurusan,prodi,kelas,email,password,status)
                 result = {"message :input berhasil"}
                 resp = jsonify(result)
                 return resp, 203 

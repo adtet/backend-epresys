@@ -5,7 +5,7 @@ import datetime
 from datetime import date
 import calendar
 # from waitress import serve
-from sqlLib import  get_kelas, get_jadwal
+from sqlLib import  get_kelas, get_jadwal, get_nim,get_status,cek_id,get_jadwal_dosen
 app = Flask(__name__)
 
 
@@ -23,23 +23,34 @@ def schedule():
             return resp, 409
         else:
             id = json_data['id']
-            kelas = get_kelas(id)
-            tgl = date.today()
-            tgl = tgl.strftime("%d%m%Y")
-            day = datetime.datetime.strptime(tgl, '%d%m%Y').weekday()
-            day = calendar.day_name[day]
-            day = str(day)
-            day = day.lower()
-            if kelas == None:
+            
+            cek = cek_id(id)
+            if cek == False:
                 result = []
                 resp = json.dumps(result)
-                return resp, 206
+                return resp, 403
             else:
-                result = get_jadwal(kelas, day)
-                resp = json.dumps(result)
-                return resp, 207
-
+                status = get_status(id) 
+                if status==0:
+                    kelas = get_kelas(id)    
+                    if kelas == None:
+                        result = []
+                        resp = json.dumps(result)
+                        return resp, 203
+                    else:
+                        resp = get_jadwal(kelas)
+                        return resp, 200
+                else:
+                    nip = get_nim(id)
+                    if nip == None:
+                        result = []
+                        resp = json.dumps(result)
+                        return resp, 203
+                    else:
+                        resp = get_jadwal_dosen(nip)
+                        return resp,200
+                        
 
 if __name__ == "__main__":
-    # serve(app, host="0.0.0.0", port=4002)
-    app.run(port=4001, debug=True)
+    # serve(app, host="0.0.0.0", port=9001)
+    app.run(port=9001, debug=True)

@@ -1,5 +1,6 @@
 import sqlLib
 from sqlLib import get_email, get_jurusan, get_kelas, get_nim, get_prodi, get_matkul, get_matkul_late, insert_main, get_username, cek_id, get_kelas, cek_present
+from sqlLib import get_status,get_matkul_dosen,get_matkul_late_dosen,insert_main_dosen
 import flask
 from flask import Flask, jsonify, request
 # from waitress import serve
@@ -13,144 +14,112 @@ def absen():
     if json_data == None:
         result = {"link":"error"}
         resp = jsonify(result)
-        return resp, 410
+        return resp, 400
     else:
         if 'id' not in json_data or 'matakuliah' not in json_data:
             result = {"link": "Not Available"}
             resp = jsonify(result)
-            return resp, 411
+            return resp, 401
         else:
             id = json_data['id']
-            matkul = json_data['matakuliah']
-            time = datetime.now()
-            tgl = date.today()
-            tgl = tgl.strftime("%d%m%Y")
-            day = datetime.strptime(tgl, '%d%m%Y'). weekday()
-            day = calendar.day_name[day]
-            day = str(day)
-            day = day.lower()
-            jam = int(time.hour)
-            menit = int(time.minute)
+            matakuliah = json_data['matakuliah']
             cek = cek_id(id)
             if cek == False:
                 result = {"link" : 'id Not Available'}
                 resp = jsonify(result)
-                return resp, 412
+                return resp, 403
             else:
-                if day == 'sunday' and day == 'saturday' :
-                    result = {"link": "schedule not available"}
-                    resp = jsonify(result)
-                    return resp, 413
-                else:
-                    nim = get_nim(id)
-                    username = get_username(id)
-                    jurusan = get_jurusan(id)
-                    prodi = get_prodi(id)
-                    kelas = get_kelas(id)
-                    email = get_email(id)
-                    det = time.strftime("%d-%m-%Y")
-                    time = time.strftime("%H:%M:%S")
-                    waktu = (jam * 60) + menit
-                    mtkl = get_matkul(kelas, day, waktu)
-                    if mtkl == 0:
-                        late = get_matkul_late(kelas, day, waktu)
-                        if late == 0:
-                            info = "you are absent"
-                            result = {"link": info}
+                kelas = get_kelas(id)
+                nim = get_nim(id)
+                username = get_username(id)
+                status = get_status(id)
+                if status==0:
+                    matkul_hadir = get_matkul(kelas)
+                    if matkul_hadir==None:
+                        matkul_telat = get_matkul_late(kelas)
+                        if matkul_telat==None:
+                            info = "tidak tersedia"
+                            result = {"link":info}
                             resp = jsonify(result)
-                            return resp, 414
+                            return resp,204
                         else:
                             info = "telat"
-                            cek_late = cek_present(id, late[0], det)
-                            if cek_late == True:
-                                insert_main(id, nim, username, jurusan, prodi, kelas, email, late[0], late[1], day, det, time, info)
-                                late = str(late[0])
-                                telat = late.translate(
-                                    {ord(i): None
-                                    for i in '-.'})
-                                tlt = "".join(telat.split())
+                            cek_di_main = cek_present(id,matkul_telat[0])
+                            if cek_di_main == True:
+                                insert_main(id,nim,username,kelas,matkul_telat[0],matkul_telat[1],matkul_telat[2],matkul_telat[3],info)
+                                component_link = matkul_telat[0]+kelas
+                                telat = component_link.translate({ord(i): None for i in '-.&'})
+                                tlt =  "".join(telat.split())
                                 data = "http://g.co/meet/" + tlt.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 208
+                                return resp, 200
                             else:
-                                info = "telat"
-                                late = str(late[0])
-                                telat = late.translate(
-                                    {ord(i): None
-                                     for i in '-.'})
-                                tlt = "".join(telat.split())
+                                component_link = matkul_telat[0]+kelas
+                                telat = component_link.translate({ord(i): None for i in '-.&'})
+                                tlt =  "".join(telat.split())
                                 data = "http://g.co/meet/" + tlt.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 209
+                                return resp, 200
                     else:
-                        if matkul == str(mtkl[0]).rstrip('\r\n'):
+                        if matakuliah==str(matkul_hadir[0]).rstrip('\r\n'):
                             info = "hadir"
-                            cek_hadir = cek_present(id, mtkl[0], det)
-                            if cek_hadir == True:
-                                insert_main(id, nim, username, jurusan, prodi, kelas, email, mtkl[0], mtkl[1], day, det, time, info)
-                                hadir = str(mtkl[0])     
-                                hadir = hadir.translate(
-                                    {ord(i): None
-                                     for i in '-.'})
+                            cek_di_main = cek_present(id,matkul_hadir[0])
+                            if cek_di_main==True:
+                                insert_main(id,nim,username,kelas,matkul_hadir[0],matkul_hadir[1],matkul_hadir[2],matkul_hadir[3],info)
+                                component_link = matkul_hadir[0]+kelas
+                                hadir = component_link.translate({ord(i): None for i in '-.&'})
                                 hdr = "".join(hadir.split())
                                 data = "http://g.co/meet/" + hdr.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 210
+                                return resp, 200
                             else:
-                                hadir = str(mtkl[0])
-                                hadir = hadir.translate(
-                                    {ord(i): None
-                                     for i in '-.'})
+                                component_link = matkul_hadir[0]+kelas
+                                hadir = component_link.translate({ord(i): None for i in '-.&'})
                                 hdr = "".join(hadir.split())
                                 data = "http://g.co/meet/" + hdr.lower()
                                 result = {"link": data}
                                 resp = jsonify(result)
-                                return resp, 211
+                                return resp, 200
                         else:
-                            late = get_matkul_late(kelas, day, waktu)
-                            if late == 0:
-                                info = "your are absent"
-                                result = {"link": info}
+                            matkul_telat = get_matkul_late(kelas)
+                            if matkul_telat==None:
+                                info = "tidak tersedia"
+                                result = {"link":info}
                                 resp = jsonify(result)
-                                return resp, 212
+                                return resp,204
                             else:
-                                if matkul == str(late[0].rstrip('\r\n')):
-                                    cek_late = cek_present(id, late[0], det)
+                                if matakuliah==str(matkul_telat[0]).rstrip('\r\n'):
                                     info = "telat"
-                                    if cek_late == True:
-                                         insert_main(id, nim, username, jurusan, prodi, kelas, email, late[0], late[1], day, det, time, info)
-                                         late = str(late[0])
-                                         telat = late.translate(
-                                             {ord(i): None 
-                                             for i in '-.'})
-                                         tlt = "".join(telat.split())
-                                         data = "http://g.co/meet/" + tlt.lower()
-                                         result = {"link": data}
-                                         resp = jsonify(result)
-                                         return resp, 213
-                                    else:
-                                        late = str(late[0])
-                                        telat = late.translate(
-                                            {ord(i): None
-                                             for i in '-.'})
-                                        tlt = "".join(telat.split())
-                                        data = "http://g.co/meet/" + tlt.lower(
-                                        )
+                                    cek_di_main = cek_present(id,matkul_telat[0])
+                                    if cek_di_main == True:
+                                        insert_main(id,nim,username,kelas,matkul_telat[0],matkul_telat[1],matkul_telat[2],matkul_telat[3],info)
+                                        component_link = matkul_telat[0]+kelas
+                                        telat = component_link.translate({ord(i): None for i in '-.&'})
+                                        tlt =  "".join(telat.split())
+                                        data = "http://g.co/meet/" + tlt.lower()
                                         result = {"link": data}
                                         resp = jsonify(result)
-                                        return resp, 214
+                                        return resp, 200
+                                    else:
+                                        component_link = matkul_telat[0]+kelas
+                                        telat = component_link.translate({ord(i): None for i in '-.&'})
+                                        tlt =  "".join(telat.split())
+                                        data = "http://g.co/meet/" + tlt.lower()
+                                        result = {"link": data}
+                                        resp = jsonify(result)
+                                        return resp, 200
                                 else:
-                                    info = "you are absent"
-                                    result = {"link": info}
+                                    info = "tidak tersedia"
+                                    result = {"link":info}
                                     resp = jsonify(result)
-                                    return resp, 215
-
+                                    return resp,204
+                                    
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=9007)
-    app.run(port=4007, debug=True)
+    app.run(port=9007, debug=True)
 
                                          
                                                     

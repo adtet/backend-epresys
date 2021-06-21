@@ -26,13 +26,9 @@ def user_login():
                 resp = jsonify(result)
                 return resp,403
             else:
-                result = {"message":cek}
+                result = {"message":cek[0],"status":cek[1]}
                 resp = jsonify(result)
                 return resp,200
-
-
-
-
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=9005)

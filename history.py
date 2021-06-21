@@ -1,4 +1,4 @@
-from sqlLib import get_main, cek_id_main
+from sqlLib import get_main, cek_id_main, get_status,cek_id,cek_id_main_dosen,get_main_2
 import flask
 from flask import Flask, jsonify, request
 #from waitress import serve
@@ -18,15 +18,29 @@ def history():
             return json.dumps(result), 505
         else:
             id = json_data['id']
-            cek_id = cek_id_main(id)
-            if cek_id == False:
+            cek = cek_id(id)
+            if cek == False:
                 result = []
-                return json.dumps(result), 506
+                return json.dumps(result), 403
             else:
-                result = get_main(id)
-                return result, 201
-
+                status = get_status(id)
+                if status==0: 
+                    cek_main = cek_id_main(id)
+                    if cek_main == False:
+                        result = []
+                        return json.dumps(result), 204
+                    else:
+                        result = get_main(id)
+                        return result, 200
+                else:
+                    cek_main_2 = cek_id_main_dosen(id)
+                    if cek_main_2 == False:
+                        result = []
+                        return json.dumps(result), 204
+                    else:
+                        result = get_main_2(id)
+                        return result, 200
 
 if __name__ == "__main__":
     # serve(app, host="0.0.0.0", port=9008)
-    app.run(port=4008, debug=True)
+    app.run(port=9008, debug=True)
