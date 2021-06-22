@@ -10,13 +10,13 @@ def koneksi_sql():
 def input_data_user(id,nim,username,jurusan,prodi,kelas,email,password,status):
     db = koneksi_sql()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO `user_regist`(`id`, `nim`, `username`, `jurusan`, `prodi`, `kelas`, `email`, `pass`,`status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(id,nim,username,jurusan,prodi,kelas,email,password,status))
+    cursor.execute("INSERT INTO `user_regist`(`id`, `nim`, `username`, `jurusan`, `prodi`, `kelas`, `email`, `pass`, `status`) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)",(id,nim,username,jurusan,prodi,kelas,email,password,status))
     db.commit()
 
 def cek_user(username,password):
     db = koneksi_sql()
     cursor = db.cursor()
-    cursor.execute("SELECT id,status FROM user_regist where username=%s and password=%s",(username,password))
+    cursor.execute("SELECT id,status FROM user_regist where username=%s and pass=%s",(username,password))
     c = cursor.fetchone()
     if c==None:
         return None
@@ -308,4 +308,3 @@ def get_status(id):
     c = cursor.fetchone()[0]
     return int(c)
     
-print(get_matkul("2A"))

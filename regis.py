@@ -15,7 +15,7 @@ def user_regist():
         if 'nim' not in json_data or 'username' not in json_data or 'jurusan' not in json_data or 'prodi' not in json_data or 'kelas' not in json_data or 'email' not in json_data or 'pass' not in json_data or 'status' not in json_data :
             result = {"message":"error request"} 
             resp = jsonify(result)
-            return resp, 405
+            return resp, 401
         else:
             id = str(uuid.uuid4().hex)
             nim = json_data ['nim']
@@ -30,8 +30,8 @@ def user_regist():
             cek = cek_user(username,password)
             nim_cek = cek_nim(nim)
             if cek == None and nim_cek==False:
-                input_data_user (id,nim,username,jurusan,prodi,kelas,email,password,status)
-                result = {"message :input berhasil"}
+                input_data_user (id,nim,username,jurusan.upper(),prodi.upper(),kelas.upper(),email,password,status)
+                result = {"message" :"input berhasil"}
                 resp = jsonify(result)
                 return resp, 203 
             else:
