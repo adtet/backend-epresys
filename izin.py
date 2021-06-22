@@ -64,19 +64,20 @@ def izin():
                                 resp = jsonify(result)
                                 return resp, 200
                     else:
-                        cek_dosen = cek_present_dosen(id,matakuliah)
                         if 'kelas' not in json_data:
                             result = {"izin" : "Error Request Lecture"}
                             resp = jsonify(result)
                             return resp, 401
                         else:
-                            kelas = json_data['kelas']
+                            kelas_ngajar = json_data['kelas']
+                            cek_dosen = cek_present_dosen(id,matakuliah,kelas_ngajar)
+                            kode_dosen = get_kelas(id)
                             if cek_dosen==False:
                                 result = {"izin": "sudah presensi"}
                                 resp = jsonify(result)
                                 return resp, 203
                             else:
-                                insert_main_dosen(id,nim,username,matakuliah,kelas,info)
+                                insert_main_dosen(id,nim,username,matakuliah,kelas_ngajar,info)
                                 result = {"izin": "proses izin berhasil"}
                                 resp = jsonify(result)
                                 return resp, 200
