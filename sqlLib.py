@@ -64,7 +64,7 @@ def get_jadwal_dosen(nip):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT `kelas`,`time_start`, `time_end`, `matakuliah`,`ruangan` FROM `schedule` WHERE `day` = LOWER(DAYNAME(CURDATE())) AND `kode_dosen1`= %s OR `kode_dosen2`= %s OR `kode_dosen3`=%s",(nip,nip,nip))
+        cursor.execute("SELECT `kelas`,`time_start`, `time_end`, `matakuliah`,`ruangan` FROM `schedule` WHERE `day` = LOWER(DAYNAME(CURDATE())) AND (`kode_dosen1`= %s OR `kode_dosen2`= %s OR `kode_dosen3`=%s)",(nip,nip,nip))
         rows = [x for x in cursor]  
         cols = [x[0] for x in cursor.description]
     except(mysql.connector.Error,mysql.connector.Warning) as e:
@@ -227,11 +227,11 @@ def get_matkul_late(kelas):
     else:
         return d
 
-def get_matkul_dosen(nip):
+def get_matkul_dosen(nip,kelas):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND time_start>=now() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip))
+        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND kelas=%s AND time_start>=now() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip,kelas))
         c = cursor.fetchone()
     except(mysql.connector.Error,mysql.connector.Warning) as e:
         print(e)
@@ -241,11 +241,11 @@ def get_matkul_dosen(nip):
     else:
         return c
 
-def get_matkul_late_dosen(nip):
+def get_matkul_late_dosen(nip,kelas):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND time_start<=CURTIME() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip))
+        cursor.execute("SELECT `kelas`, `matakuliah`,day FROM `schedule` WHERE (`kode_dosen1` = %s OR `kode_dosen2`=%s OR `kode_dosen3`=%s) AND kelas = %s AND time_start<=CURTIME() AND time_end>= CURTIME() HAVING `day`= LOWER(DAYNAME(CURDATE()))",(nip,nip,nip,kelas))
         c = cursor.fetchone()
     except(mysql.connector.Error,mysql.connector.Warning) as e:
         print(e)
@@ -267,11 +267,11 @@ def cek_present(id,matakuliah):
     else:
         return False
 
-def cek_present_dosen(id,matakuliah):
+def cek_present_dosen(id,matakuliah,kelas):
     db = koneksi_sql()
     cursor = db.cursor()
     try:
-        cursor.execute("SELECT `id` FROM `main2` WHERE id=%s AND matakuliah=%s AND `date` = now()",(id,matakuliah))
+        cursor.execute("SELECT `id` FROM `main2` WHERE id=%s AND matakuliah=%s AND kelas=%s  AND `date` = CURDATE()",(id,matakuliah,kelas))
         c = cursor.fetchone()
     except(mysql.connector.Warning,mysql.connector.Error) as e:
         print(e)
@@ -311,3 +311,4 @@ def get_status(id):
     c = cursor.fetchone()[0]
     return int(c)
     
+# print(get_jadwal_dosen("196208291996011001"))
