@@ -1,5 +1,5 @@
 from flask import app
-from sqlLib import cek_id, get_email, get_matkul, get_jadwal, get_jurusan, get_kelas, get_main, get_matkul_late, get_nim, get_prodi, get_status, get_username, cek_present, insert_main
+from sqlLib import cek_id, get_email, get_matkul, get_jadwal,  get_kelas, get_main, get_matkul_late, get_nim,  get_status, get_username, cek_present, insert_main
 from sqlLib import cek_present_dosen,insert_main_dosen
 import flask
 from flask import Flask, jsonify, request

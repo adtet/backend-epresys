@@ -1,5 +1,5 @@
 from flask import app
-from sqlLib import cek_id, get_email, get_matkul, get_jadwal, get_jurusan, get_kelas, get_main, get_matkul_late, get_nim, get_prodi, get_username, cek_present, insert_main
+from sqlLib import cek_id, get_email, get_matkul, get_jadwal, get_kelas, get_main, get_matkul_late, get_nim,  get_username, cek_present, insert_main
 from sqlLib import get_status,cek_present_dosen,insert_main_dosen
 import flask
 from flask import Flask, jsonify, request
@@ -60,7 +60,7 @@ def izin():
                                 return resp, 203
                             else:
                                 insert_main(id, nim, username,kelas,matakuliah,dosen1,dosen2,dosen3,info)
-                                result = {"sakit": "proses izin berhasil"}
+                                result = {"sakit": "proses izin sakit berhasil"}
                                 resp = jsonify(result)
                                 return resp, 200
                     else:
