@@ -97,7 +97,7 @@ def get_main(a):
     db = koneksi_sql()
     cursor = db.cursor()
     cursor.execute(
-        "SELECT day,date,matakuliah,dosen,time,info FROM main WHERE id=%s",
+        "SELECT day,date,matakuliah,dosen1,dosen2,dosen3,time,info FROM main WHERE id=%s",
         (a, ))
     rows = [x for x in cursor]  #compare sql data to json
     cols = [x[0] for x in cursor.description]  #compare sql data to json
@@ -106,7 +106,10 @@ def get_main(a):
         data = {}  #compare sql data to json
         for prop, val in zip(cols, row):  #compare sql data to json
             data[prop] = val  #compare sql data to json
-        datas.append(data)  #compare sql data to json
+        datas.append(data)
+    for i in range(0,len(datas)):
+        datas[i]['date'] = str(datas[i]['date'])
+        datas[i]['time'] = str(datas[i]['time'])
     dataJson = json.dumps(datas)  #compare sql data to json
     return dataJson  #compare sql data to json
 
