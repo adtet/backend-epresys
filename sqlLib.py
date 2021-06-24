@@ -311,4 +311,109 @@ def get_status(id):
     c = cursor.fetchone()[0]
     return int(c)
     
-# print(get_jadwal_dosen("196208291996011001"))
+
+def get_code_command_get_room(ruangan):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE `nama_ruangan`=%s",(ruangan,))
+        c = cursor.fetchone()[0]
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == "bengkel":
+        return 0
+    elif c == "gedung a":
+        return 1
+    elif c == "gedung p2t":
+        return 2
+    elif c == "lab atas":
+        return 3
+    elif c == "lab bawah":
+        return 4
+    else:
+        return -1
+
+def query_cek_ruangan_lab_bawah(ruangan,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE (lat+(-0.0001135077714731203)<=%s AND lat-(-0.0001135077714731203)>=%s) AND (lng+0.00029135510315825286>=%s AND lng-0.00029135510315825286<= %s) AND nama_ruangan = %s",(lat,lat,lng,lng,ruangan))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    elif c[0] !="lab bawah":
+        return False
+    else:
+        return True
+
+def query_cek_ruangan_lab_atas(ruangan,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE (lat+(-0.00011135970354381186)<=%s AND lat-(-0.00011135970354381186)>=%s) AND (lng+0.00022760156714696222>=%s AND lng-0.00022760156714696222<= %s) AND nama_ruangan = %s",(lat,lat,lng,lng,ruangan))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    elif c[0] !="lab atas":
+        return False
+    else:
+        return True
+
+def query_cek_ruangan_gedung_a(ruangan,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE (lat+(-8.654567138233205e-05)<=%s AND lat-(-8.654567138233205e-05)>=%s) AND (lng+0.000256486359589303>=%s AND lng-0.000256486359589303<= %s) AND nama_ruangan = %s",(lat,lat,lng,lng,ruangan))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    elif c[0] !="gedung a":
+        return False
+    else:
+        return True
+        
+def query_cek_ruangan_p2t(ruangan,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE (lat+(-0.00019239747018184872)<=%s AND lat-(-0.00019239747018184872)>=%s) AND (lng+0.0002541396627364634>=%s AND lng-0.0002541396627364634<= %s) AND nama_ruangan = %s",(lat,lat,lng,lng,ruangan))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    elif c[0] !="gedung p2t":
+        return False
+    else:
+        return True
+
+
+def query_cek_ruangan_bengkel(ruangan,lat,lng):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE (lat+(-0.00011433336683053241)<=%s AND lat-(-0.00011433336683053241)>=%s) AND (lng+0.0003110825825842767>=%s AND lng-0.0003110825825842767<= %s) AND nama_ruangan = %s",(lat,lat,lng,lng,ruangan))
+        c = cursor.fetchone()
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        c = None
+    if c == None:
+        return False
+    elif c[0] !="bengkel":
+        return False
+    else:
+        return True
+
+
+
