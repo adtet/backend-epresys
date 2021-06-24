@@ -317,22 +317,25 @@ def get_code_command_get_room(ruangan):
     cursor = db.cursor()
     try:
         cursor.execute("SELECT `nama_ruangan` FROM `tb_ruangan` WHERE `nama_ruangan`=%s",(ruangan,))
-        c = cursor.fetchone()[0]
+        c = cursor.fetchone()
     except(mysql.connector.Error,mysql.connector.Warning) as e:
         print(e)
         c = None
-    if c == "bengkel":
-        return 0
-    elif c == "gedung a":
-        return 1
-    elif c == "gedung p2t":
-        return 2
-    elif c == "lab atas":
-        return 3
-    elif c == "lab bawah":
-        return 4
-    else:
+    if c==None:
         return -1
+    else:
+        if c[0] == "bengkel":
+            return 0
+        elif c[0] == "gedung a":
+            return 1
+        elif c[0] == "gedung p2t":
+            return 2
+        elif c[0] == "lab atas":
+            return 3
+        elif c[0] == "lab bawah":
+            return 4
+        else:
+            return -2
 
 def query_cek_ruangan_lab_bawah(ruangan,lat,lng):
     db = koneksi_sql()
@@ -414,6 +417,3 @@ def query_cek_ruangan_bengkel(ruangan,lat,lng):
         return False
     else:
         return True
-
-
-

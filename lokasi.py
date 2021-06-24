@@ -14,7 +14,7 @@ def lokasi():
         return resp,400
     else:
         if 'id' not in json_data or 'lat' not in json_data or 'lng' not in json_data or 'ruangan' not in json_data:
-            result = {"izin": "error request"}
+            result = {"message": "error request"}
             resp = jsonify(result)
             return resp, 401
         else:
