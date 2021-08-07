@@ -454,3 +454,50 @@ def query_cek_ruangan_bengkel(ruangan,lat,lng):
             test = strict_area(lngdb,latdb,lng,lat,area_range)
             return test
 
+def get_jadwal_test(kelas):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    try:
+        cursor.execute("SELECT  `time_start`, `time_end`,  `matakuliah`, `dosen1`, `dosen2`, `dosen3`, `ruangan` FROM `schedule` WHERE `kelas`=%s AND `day`=%s",(kelas,"monday"))
+        rows = [x for x in cursor]  
+        cols = [x[0] for x in cursor.description]
+    except(mysql.connector.Error,mysql.connector.Warning) as e:
+        print(e)
+        rows = []
+        cols = []  
+    datas = []  
+    for row in rows:  
+        data = {}  
+        for prop, val in zip(cols, row):  
+            data[prop] = val  
+        datas.append(data)  
+    for x in range(0,len(datas)):
+        datas[x]['time_start'] = str(datas[x]['time_start'])
+        datas[x]['time_end'] = str(datas[x]['time_end'])
+    dataJson = json.dumps(datas)  
+    return dataJson
+
+def get_matkul_test(kelas):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT `matakuliah`, `dosen1`, `dosen2`,`dosen3` FROM `schedule` WHERE `kelas`=%s AND `day`= %s AND time_start>=CURTIME() AND time_end>= CURTIME()",
+        (kelas,"monday"))
+    d = cursor.fetchone()
+    if d == None:
+        return None
+    else:
+        return d
+
+def get_matkul_late_test(kelas):
+    db = koneksi_sql()
+    cursor = db.cursor()
+    cursor.execute(
+        "SELECT `matakuliah`, `dosen1`, `dosen2`,`dosen3` FROM `schedule` WHERE `kelas`=%s AND `day`= %s AND time_start<=CURTIME() AND time_end>= CURTIME()",
+        (kelas,"monday"))
+    d = cursor.fetchone()
+    if d == None:
+        return None
+    else:
+        return d
+    

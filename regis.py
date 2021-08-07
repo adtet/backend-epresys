@@ -33,7 +33,7 @@ def user_regist():
                 input_data_user (id,nim,username,jurusan.upper(),prodi.upper(),kelas.upper(),email,password,status)
                 result = {"message" :"input berhasil"}
                 resp = jsonify(result)
-                return resp, 203 
+                return resp, 200 
             else:
                 result = {"message" : "sudah terdaftar"}
                 resp = jsonify(result)
